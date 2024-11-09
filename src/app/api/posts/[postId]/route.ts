@@ -4,7 +4,7 @@ import { LikeInfo } from "@/lib/types";
 
 export async function GET(
   req: Request,
-  { params: { postId } }: { params: { postId: string } },
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
     const { user: loggedInUser } = await validateRequest();
@@ -12,6 +12,8 @@ export async function GET(
     if (!loggedInUser) {
       return Response.json({ error: "Unauthorize" }, { status: 401 });
     }
+
+    const { postId } = await params;
 
     const post = await prisma.post.findFirst({
       where: {
@@ -52,7 +54,7 @@ export async function GET(
 
 export async function POST(
   req: Request,
-  { params: { postId } }: { params: { postId: string } },
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
     const { user: loggedInUser } = await validateRequest();
@@ -60,6 +62,8 @@ export async function POST(
     if (!loggedInUser) {
       return Response.json({ error: "Unauthorize" }, { status: 401 });
     }
+
+    const { postId } = await params;
 
     const post = await prisma.post.findUnique({
       where: { id: postId },
@@ -109,7 +113,7 @@ export async function POST(
 
 export async function DELETE(
   req: Request,
-  { params: { postId } }: { params: { postId: string } },
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
     const { user: loggedInUser } = await validateRequest();
@@ -117,6 +121,8 @@ export async function DELETE(
     if (!loggedInUser) {
       return Response.json({ error: "Unauthorize" }, { status: 401 });
     }
+
+    const { postId } = await params;
 
     const post = await prisma.post.findUnique({
       where: { id: postId },

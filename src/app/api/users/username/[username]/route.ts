@@ -4,7 +4,7 @@ import { UserDataSelect } from "@/lib/types";
 
 export async function GET(
   req: Request,
-  { params: { username } }: { params: { username: string } },
+  { params }: { params: Promise<{ username: string }> },
 ) {
   try {
     const { user: loggedInUser } = await validateRequest();
@@ -12,6 +12,8 @@ export async function GET(
     if (!loggedInUser) {
       return Response.json({ error: "Unauthorize" }, { status: 401 });
     }
+
+    const { username } = await params;
 
     const user = await prisma.user.findFirst({
       where: {

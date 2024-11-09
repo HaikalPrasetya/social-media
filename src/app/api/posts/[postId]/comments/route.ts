@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params: { postId } }: { params: { postId: string } },
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
     const { user: loggedInUser } = await validateRequest();
@@ -17,6 +17,8 @@ export async function GET(
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
 
     const pageSize = 6;
+
+    const { postId } = await params;
 
     const posts = await prisma.comment.findMany({
       where: { postId },

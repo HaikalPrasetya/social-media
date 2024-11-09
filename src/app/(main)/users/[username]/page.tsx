@@ -15,7 +15,7 @@ import FollowCount from "@/components/FollowCount";
 import EditProfileButton from "@/app/api/users/username/[username]/EditProfileButton";
 
 interface PageProps {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 }
 
 const getUser = cache(async (username: string, loggedInUserId: string) => {
@@ -35,11 +35,13 @@ const getUser = cache(async (username: string, loggedInUserId: string) => {
 });
 
 export async function generateMetadata({
-  params: { username },
+  params,
 }: PageProps): Promise<Metadata> {
   const { user: loggedInUserId } = await validateRequest();
 
   if (!loggedInUserId) return {};
+
+  const { username } = await params;
 
   const user = await getUser(username, loggedInUserId.id);
 
@@ -48,9 +50,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function UserProfilePage({
-  params: { username },
-}: PageProps) {
+export default async function UserProfilePage({ params }: PageProps) {
   const { user: loggedInUserId } = await validateRequest();
 
   if (!loggedInUserId) {
@@ -60,6 +60,7 @@ export default async function UserProfilePage({
       </p>
     );
   }
+  const { username } = await params;
 
   const user = await getUser(username, loggedInUserId.id);
 

@@ -11,7 +11,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 
 interface PageProps {
-  params: { postId: string };
+  params: Promise<{ postId: string }>;
 }
 
 const getData = cache(async (postId: string, loggedInUserId: string) => {
@@ -25,8 +25,10 @@ const getData = cache(async (postId: string, loggedInUserId: string) => {
   return post;
 });
 
-export async function generateMetadata({ params: { postId } }: PageProps) {
+export async function generateMetadata({ params }: PageProps) {
   const { user } = await validateRequest();
+
+  const { postId } = await params;
 
   if (!user) return {};
 
@@ -37,8 +39,10 @@ export async function generateMetadata({ params: { postId } }: PageProps) {
   };
 }
 
-export default async function Page({ params: { postId } }: PageProps) {
+export default async function Page({ params }: PageProps) {
   const { user: loggedInUser } = await validateRequest();
+
+  const { postId } = await params;
 
   const data = await getData(postId, loggedInUser?.id!);
 

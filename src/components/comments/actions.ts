@@ -27,14 +27,18 @@ export async function submitComment({
       },
       include: getCommentDataInclude(user.id),
     }),
-    prisma.notification.create({
-      data: {
-        issuerId: user.id,
-        recipientId: post.userId,
-        postId: post.id,
-        type: "COMMENT",
-      },
-    }),
+    ...(user.id !== post.userId
+      ? [
+          prisma.notification.create({
+            data: {
+              issuerId: user.id,
+              recipientId: post.userId,
+              postId: post.id,
+              type: "COMMENT",
+            },
+          }),
+        ]
+      : []),
   ]);
 
   return newComment;

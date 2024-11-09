@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params: { userId } }: { params: { userId: string } },
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     const { user } = await validateRequest();
@@ -17,6 +17,8 @@ export async function GET(
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
 
     const pageSize = 10;
+
+    const { userId } = await params;
 
     const feeds: PostData[] = await prisma.post.findMany({
       where: {

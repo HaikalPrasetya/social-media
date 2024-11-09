@@ -40,14 +40,14 @@ export function useUpdatePeofileMutation() {
 
       queryClient.setQueriesData<InfiniteData<PostPage, string | null>>(
         queryFilter,
-        (oldData) => {
-          if (!oldData) return;
+        (oldData: any) => {
+          if (!oldData) return oldData;
 
           return {
             pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page) => ({
+            pages: oldData.pages.map((page: any) => ({
               nextCursor: page.nextCursor,
-              posts: page.posts.map((post) => {
+              posts: page.posts.map((post: any) => {
                 if (post.user.id === updatedUser.id) {
                   return {
                     ...post,
